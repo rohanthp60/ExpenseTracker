@@ -28,7 +28,7 @@ class ExpenseDescription(BaseModel):
 
 class MonthlyExpenseDescription(ExpenseDescription):
     year: int
-    month: str
+    month: int
 
 
 

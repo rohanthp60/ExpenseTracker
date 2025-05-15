@@ -5,12 +5,13 @@ from datetime import date
 from app.model.expense import Expense
 from app.schemas import schema
 
-def create_expense(db: Session, expense: schema.ExpenseBase) -> schema.ExpenseBase:
+
+def create_expense(db: Session, expense: schema.ExpenseBase) -> int:
     db_expense = Expense(**expense.model_dump())
     db.add(db_expense)
     db.commit()
     db.refresh(db_expense)
-    return expense
+    return db_expense.id
 
 def get_monthly_expenses(db: Session, year: int, month: str) -> schema.MonthlyExpenseDescription:
     total_amount = func.sum(Expense.amount).label("total_amount")
@@ -39,6 +40,7 @@ def get_monthly_expenses(db: Session, year: int, month: str) -> schema.MonthlyEx
     )
 
     for category, total in category_totals:
+        category = category.lower()
         if category == "food":
             expense_description.food = total
         elif category == "transport":
@@ -82,17 +84,17 @@ def get_yearly_expenses(db: Session, year: int):
         total=0
     )
     for category, total in category_totals:
-        if category == "food":
+        if category == "Food":
             expense_description.food = total
-        elif category == "transport":
+        elif category == "Transport":
             expense_description.transport = total
-        elif category == "housing":
+        elif category == "Housing":
             expense_description.housing = total
-        elif category == "entertainment":
+        elif category == "Entertainment":
             expense_description.entertainment = total
-        elif category == "health":
+        elif category == "Health":
             expense_description.health = total
-        elif category == "education":
+        elif category == "Education":
             expense_description.education = total
         else:
             expense_description.others += total
@@ -127,3 +129,15 @@ def get_expense_by_date_range(db: Session, start_date: str, end_date: str) -> sc
         total=total_amount,
         expenses=expense_list
     )
+
+def get_expense_by_id(db: Session, expense_id: int) -> schema.ExpenseBase | None:
+    expense = db.query(Expense).filter(Expense.id == expense_id).first()
+    if expense is None:
+        return None
+    return schema.ExpenseBase.model_validate({
+        "id": expense.id,
+        "description": expense.description,
+        "amount": expense.amount,
+        "category": expense.category,
+        "date": expense.date.strftime("%Y/%m/%d") if isinstance(expense.date, date) else str(expense.date)
+    })

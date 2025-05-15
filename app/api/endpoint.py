@@ -14,10 +14,10 @@ def get_db():
 
 router = APIRouter()
 
-@router.post("/expense", response_model=schema.ExpenseBase)
+@router.post("/expense")
 def create_expense(expense: schema.ExpenseBase, db: Session = Depends(get_db)):
-    db_expense = operations.create_expense(db=db, expense=expense)
-    return db_expense
+    db_expense_id = operations.create_expense(db=db, expense=expense)
+    return {"message": "Expense created successfully", "expense_id": db_expense_id}
 
 @router.get("/expense/monthly/{year}/{month}", response_model=schema.MonthlyExpenseDescription)
 def get_monthly_expenses(year: int, month: str, db: Session = Depends(get_db)):
@@ -39,3 +39,11 @@ def get_expenses_in_date_range(start_date: str, end_date: str, db: Session = Dep
     if not expenses:
         raise HTTPException(status_code=404, detail="No expenses found in the given date range")
     return expenses
+
+@router.get("/expense/{id}", response_model=schema.ExpenseBase)
+def get_expense_by_id(id: int, db: Session = Depends(get_db)):
+    expense = operations.get_expense_by_id(db=db, expense_id=id)
+    if not expense:
+        raise HTTPException(status_code=404, detail="No expense by that id exists")
+    return expense
+
