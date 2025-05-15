@@ -1,0 +1,14 @@
+site_name: Expense Tracker Docs
+nav:
+  - Home: index.md
+  - Setup: setup.md
+  - Configuration: config.md
+  - Models: models.md
+  - Schema: schema.md
+  - Operations: operations.md
+  - Endpoints: endpoint.md
+  - Tests: test.md
+
+docs_dir: docs
+theme:
+  name: material

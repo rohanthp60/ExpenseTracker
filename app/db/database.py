@@ -5,6 +5,8 @@ import logging
 
 from app.core.config import settings
 
+
+'''prepares a base, connects to database'''
 logging.basicConfig(level=logging.DEBUG)
 
 engine = create_engine(str(settings.DATABASE_URL))

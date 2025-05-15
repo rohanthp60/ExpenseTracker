@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+'''to get the database url from the .env file'''
 class Settings(BaseSettings):
     DATABASE_HOST: str = "host.docker.internal"  
     DATABASE_PORT: str = "5432"  

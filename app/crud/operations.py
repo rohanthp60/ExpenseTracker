@@ -13,6 +13,8 @@ def create_expense(db: Session, expense: schema.ExpenseBase) -> int:
     db.refresh(db_expense)
     return db_expense.id
 
+
+'''filters the records according to month and year, then sums the expense for individual category'''
 def get_monthly_expenses(db: Session, year: int, month: str) -> schema.MonthlyExpenseDescription:
     total_amount = func.sum(Expense.amount).label("total_amount")
     category_totals = (

@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, Date, String, Enum
 
 from app.db.database import Base
 
+
+'''relation despription for expense'''
 class Expense(Base):
     __tablename__ = "expenses"
 
